@@ -23,10 +23,12 @@ class ChatStage(tk.Frame):
         self.entry.pack(padx=20, pady=5, fill="x")
 
         tk.Button(self, text="发送", command=self.send_message).pack(pady=5)
+        tk.Button(self, text="清空对话", command=self.clear_chat).pack(pady=5)
         self.api_client = OpenAIClient()  # 建议从环境变量读取
         self.messages = [
             {"role": "system", "content": "你是一个流程图助手，请根据用户意图生成流程描述。"}
         ]
+        self.last_reply=''
 
     def send_message(self):
         user_input = self.entry.get()
@@ -44,7 +46,16 @@ class ChatStage(tk.Frame):
 
             reply = self.api_client.chat(self.messages)
             self.messages.append({"role": "assistant", "content": reply})
+            self.last_reply=reply
 
 
             self.chat_box.insert("end", f"🤖 大模型：{reply}\n\n")
             self.chat_box.see("end")
+
+    def clear_chat(self):
+        self.chat_box.delete("1.0", "end")
+        self.entry.delete(0, "end")
+        self.messages = [
+            {"role": "system", "content": "你是一个流程图助手，请根据用户意图生成流程描述。"}
+        ]
+        self.last_reply = ""

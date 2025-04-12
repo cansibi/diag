@@ -17,6 +17,9 @@ class App:
         self.main_frame = tk.Frame(self.root, bg="white")
         self.main_frame.pack(side="right", expand=True, fill="both")
 
+        self.chat_stage=False
+        self.flow_stage=False
+        self.output_stage=False
         self._create_buttons()
 
         self.switch_stage("chat")  # 默认进入第一阶段
@@ -27,13 +30,21 @@ class App:
         tk.Button(self.sidebar, text="阶段三：输出结果", command=lambda: self.switch_stage("output")).pack(pady=20)
 
     def switch_stage(self, stage_name):
+        if self.chat_stage:
+            last_reply=self.current_stage_frame.last_reply
         if self.current_stage_frame:
             self.current_stage_frame.destroy()
 
         if stage_name == "chat":
             self.current_stage_frame = ChatStage(self.main_frame)
+            self.chat_stage=True
+            self.flow_stage=False
+            self.output_stage=False
         elif stage_name == "flow":
-            self.current_stage_frame = FlowStage(self.main_frame)
+
+            if self.chat_stage:
+                last_reply=self.current_stage_frame.last_reply
+            self.current_stage_frame = FlowStage(self.main_frame,last_reply)
         elif stage_name == "output":
             self.current_stage_frame = OutputStage(self.main_frame)
 
