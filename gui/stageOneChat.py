@@ -1,7 +1,5 @@
 import tkinter as tk
-from pyexpat.errors import messages
-
-from openai import api_key
+import logging
 
 from core.llmCilent import OpenAIClient
 import os
@@ -29,6 +27,7 @@ class ChatStage(tk.Frame):
             {"role": "system", "content": "你是一个流程图助手，请根据用户意图生成流程描述。"}
         ]
         self.last_reply=''
+        self.logger = logging.getLogger(__name__)
 
     def send_message(self):
         user_input = self.entry.get()
@@ -47,7 +46,7 @@ class ChatStage(tk.Frame):
             reply = self.api_client.chat(self.messages)
             self.messages.append({"role": "assistant", "content": reply})
             self.last_reply=reply
-
+            self.logger.info(f"大模型回复：{self.last_reply}")
 
             self.chat_box.insert("end", f"🤖 大模型：{reply}\n\n")
             self.chat_box.see("end")

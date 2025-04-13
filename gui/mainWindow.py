@@ -2,6 +2,7 @@ import tkinter as tk
 from gui.stageOneChat import ChatStage
 from gui.stageTwoFlow import FlowStage
 from gui.stageThreeOutput import OutputStage
+import logging
 
 class App:
     def __init__(self):
@@ -21,6 +22,7 @@ class App:
         self.flow_stage=False
         self.output_stage=False
         self._create_buttons()
+        self.logger=logging.getLogger(__name__)
 
         self.switch_stage("chat")  # 默认进入第一阶段
 
@@ -36,16 +38,21 @@ class App:
             self.current_stage_frame.destroy()
 
         if stage_name == "chat":
+            self.logger.info("进入阶段一：意图对话")
             self.current_stage_frame = ChatStage(self.main_frame)
             self.chat_stage=True
             self.flow_stage=False
             self.output_stage=False
         elif stage_name == "flow":
-
-            if self.chat_stage:
-                last_reply=self.current_stage_frame.last_reply
+            self.chat_stage=False
+            self.flow_stage=True
+            self.output_stage=False
+            self.logger.debug("进入阶段二：生成流程图")
             self.current_stage_frame = FlowStage(self.main_frame,last_reply)
         elif stage_name == "output":
+            self.chat_stage=False
+            self.flow_stage=False
+            self.output_stage=True
             self.current_stage_frame = OutputStage(self.main_frame)
 
         self.current_stage_frame.pack(expand=True, fill="both")
