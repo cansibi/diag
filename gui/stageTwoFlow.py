@@ -7,6 +7,7 @@ import tempfile
 import os
 from graphviz import Digraph
 from core.llmCilent import OpenAIClient
+import webbrowser
 class FlowStage(tk.Frame):
     def __init__(self, parent,last_reply=''):
         super().__init__(parent)
@@ -21,9 +22,19 @@ class FlowStage(tk.Frame):
         self.generate_btn = tk.Button(self, text="✅ 生成流程图", command=self.generate_and_render())
         self.generate_btn.pack(pady=5)
 
-        self.image_label = tk.Label(self)
-        self.image_label.pack(pady=10)
+        self.canvas_frame = tk.Frame(self)
+        self.canvas_frame.pack(expand=True, fill='both', padx=10, pady=10)
+
+        self.canvas = tk.Canvas(self.canvas_frame, bg='white')
+        self.scroll_x = tk.Scrollbar(self.canvas_frame, orient='horizontal', command=self.canvas.xview)
+        self.scroll_y = tk.Scrollbar(self.canvas_frame, orient='vertical', command=self.canvas.yview)
+        self.canvas.configure(xscrollcommand=self.scroll_x.set, yscrollcommand=self.scroll_y.set)
+
+        self.scroll_x.pack(side='bottom', fill='x')
+        self.scroll_y.pack(side='right', fill='y')
+        self.canvas.pack(side='left', expand=True, fill='both')
         self.code_area.pack(padx=20, pady=10, fill="both", expand=True)
+        tk.Button(self, text="🖼️ 打开完整图片", command=self.open_image_file).pack(pady=5)
 
         if self.last_reply.strip():
             self.generate_mermaid(self.last_reply)
@@ -55,7 +66,7 @@ class FlowStage(tk.Frame):
             if line.startswith("1. 节点定义："):
                 mode = "nodes"
                 continue
-            elif line.startswith("1. 连接关系"):
+            elif line.startswith("2. 连接关系"):
                 mode = "edges"
                 continue
 
@@ -76,6 +87,7 @@ class FlowStage(tk.Frame):
         dot = Digraph(format="png")
         dot.attr('node', fontname='Microsoft YaHei')
         dot.attr('edge', fontname='Microsoft YaHei')
+        dot.attr(rankdir="TB")
 
         shape_map = {
             "start": "ellipse",
@@ -101,9 +113,13 @@ class FlowStage(tk.Frame):
     def display_image(self):
         try:
             image = Image.open(self.temp_img_path)
-            image.thumbnail((900, 700))
-            photo = ImageTk.PhotoImage(image)
-            self.image_label.configure(image=photo)
-            self.image_label.image = photo
+            self.photo = ImageTk.PhotoImage(image)
+            self.canvas.delete("all")  # 清空旧图
+            self.canvas.create_image(0, 0, image=self.photo, anchor="nw")
+            self.canvas.config(scrollregion=self.canvas.bbox("all"))
         except Exception as e:
             self.code_area.insert("end", f"\n[图片显示失败] {e}\n")
+
+    def open_image_file(self):
+        if os.path.exists(self.temp_img_path):
+            webbrowser.open(self.temp_img_path)
