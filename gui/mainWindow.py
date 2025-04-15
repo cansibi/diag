@@ -53,7 +53,8 @@ class App:
             self.chat_stage=False
             self.flow_stage=False
             self.output_stage=True
-            self.current_stage_frame = OutputStage(self.main_frame)
+            img_path=self.current_stage_frame.generated_image_path
+            self.current_stage_frame = OutputStage(self.main_frame,img_path)
 
         self.current_stage_frame.pack(expand=True, fill="both")
 

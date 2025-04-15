@@ -20,7 +20,7 @@ class OpenAIClient:
 
     def generate_flow_text(self, description):
         prompt= f"""
-你是一个流程图生成器，请根据下面的业务描述，生成一个流程图的结构，输出格式为两个部分：
+你是一个流程图生成器，请根据下面的业务描述，生成一个流程图的结构，不要在回答中出现类似###的符号，输出格式为两个部分：
 
 1.节点定义：每行格式为 节点ID: 名称, 类型（start/process/decision/input/output/connector/end）
 

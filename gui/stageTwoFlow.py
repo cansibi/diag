@@ -14,12 +14,13 @@ class FlowStage(tk.Frame):
         tk.Label(self, text="📊 阶段二：生成流程图和代码", font=("Arial", 16)).pack(pady=10)
         self.last_reply=last_reply
         self.code_area = scrolledtext.ScrolledText(self, height=10)
+        self.generated_image_path=None
         self.api_client = OpenAIClient()
         self.logger = logging.getLogger(__name__)
         # 如果有self.last_reply，输入到日志里
         self.logger.debug(f"用户意图：{self.last_reply}")
         self.temp_img_path = os.path.join(tempfile.gettempdir(), "graphviz_flow.png")
-        self.generate_btn = tk.Button(self, text="✅ 生成流程图", command=self.generate_and_render())
+        self.generate_btn = tk.Button(self, text="✅ 生成流程图", command=self.generate_and_render)
         self.generate_btn.pack(pady=5)
 
         self.canvas_frame = tk.Frame(self)
@@ -51,7 +52,6 @@ class FlowStage(tk.Frame):
         self.render_graphviz(response)
 
     def generate_and_render(self):
-        self.generate_mermaid(self.last_reply)
         text = self.code_area.get("1.0", "end").strip()
         self.render_graphviz(text)
 
@@ -63,10 +63,10 @@ class FlowStage(tk.Frame):
             line = line.strip()
             if not line:
                 continue
-            if line.startswith("1. 节点定义："):
+            if line.startswith("1.节点定义："):
                 mode = "nodes"
                 continue
-            elif line.startswith("2. 连接关系"):
+            elif line.startswith("2.连接关系："):
                 mode = "edges"
                 continue
 
@@ -108,6 +108,7 @@ class FlowStage(tk.Frame):
 
         output_path = os.path.splitext(self.temp_img_path)[0]
         dot.render(output_path, cleanup=True)
+        self.generated_image_path = self.temp_img_path
         self.display_image()
 
     def display_image(self):
