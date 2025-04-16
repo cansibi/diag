@@ -4,14 +4,18 @@ import logging
 from core.llmCilent import OpenAIClient
 import os
 from dotenv import load_dotenv
+import sys
 
 # Load environment variables from .env file
-load_dotenv()
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+load_dotenv(dotenv_path=resource_path(".env"))
 
 class ChatStage(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
-        api_key= os.getenv("OPENAI_API_KEY")
         tk.Label(self, text="👤 阶段一：需求拆解", font=("Arial", 16)).pack(pady=10)
 
         self.chat_box = tk.Text(self, height=20)
