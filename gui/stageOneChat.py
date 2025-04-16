@@ -12,7 +12,7 @@ class ChatStage(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         api_key= os.getenv("OPENAI_API_KEY")
-        tk.Label(self, text="👤 阶段一：用户与大模型对话", font=("Arial", 16)).pack(pady=10)
+        tk.Label(self, text="👤 阶段一：需求拆解", font=("Arial", 16)).pack(pady=10)
 
         self.chat_box = tk.Text(self, height=20)
         self.chat_box.pack(padx=20, pady=10, fill="both", expand=True)

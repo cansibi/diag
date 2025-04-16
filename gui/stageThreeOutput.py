@@ -2,13 +2,13 @@ import os
 import tkinter as tk
 from tkinter import filedialog
 
+
 class OutputStage(tk.Frame):
     def __init__(self, parent, image_path=""):
         super().__init__(parent)
         self.image_path = image_path
         tk.Label(self, text="📦 阶段三：输出最终结果", font=("Arial", 16)).pack(pady=10)
         tk.Button(self, text="导出为 PNG", command=self.save_as_png).pack(pady=10)
-
 
     def save_as_png(self):
         if not self.image_path or not os.path.exists(self.image_path):

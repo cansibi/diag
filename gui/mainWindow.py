@@ -27,8 +27,8 @@ class App:
         self.switch_stage("chat")  # 默认进入第一阶段
 
     def _create_buttons(self):
-        tk.Button(self.sidebar, text="阶段一：意图对话", command=lambda: self.switch_stage("chat")).pack(pady=20)
-        tk.Button(self.sidebar, text="阶段二：生成流程图", command=lambda: self.switch_stage("flow")).pack(pady=20)
+        tk.Button(self.sidebar, text="阶段一：需求拆解", command=lambda: self.switch_stage("chat")).pack(pady=20)
+        tk.Button(self.sidebar, text="阶段二：代码图片生成", command=lambda: self.switch_stage("flow")).pack(pady=20)
         tk.Button(self.sidebar, text="阶段三：输出结果", command=lambda: self.switch_stage("output")).pack(pady=20)
 
     def switch_stage(self, stage_name):
@@ -53,7 +53,7 @@ class App:
             self.chat_stage=False
             self.flow_stage=False
             self.output_stage=True
-            img_path=self.current_stage_frame.generated_image_path
+            img_path=self.current_stage_frame.temp_img_path
             self.current_stage_frame = OutputStage(self.main_frame,img_path)
 
         self.current_stage_frame.pack(expand=True, fill="both")
